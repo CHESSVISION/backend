@@ -11,9 +11,7 @@ game_manager = GameManager()
 
 # Define allowed origins
 origins = [
-    "http://localhost",
     "http://localhost:3000",  # React default port
-    "http://your-frontend-domain.com",
 ]
 
 app.add_middleware(
