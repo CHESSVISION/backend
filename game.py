@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import List
+
+from pydantic import BaseModel
 
 
 class GameModel(BaseModel):
@@ -60,4 +61,3 @@ games = [
         moves=["e2a5", "g7f7", "c9h6"]
     )
 ]
-

@@ -1,8 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from game import GameManager, GameModel
 import os
 import shutil
+
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
+from game import GameManager
 
 app = FastAPI()
 game_manager = GameManager()
