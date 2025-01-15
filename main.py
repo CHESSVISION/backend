@@ -11,6 +11,7 @@ game_manager = GameManager()
 
 # Define allowed origins
 origins = [
+    "http://127.0.0.1:3000",  # React default port
     "http://localhost:3000",  # React default port
 ]
 
