@@ -1,28 +1,13 @@
-from inference import get_model
-import supervision as sv
 import math
 import numpy as np
 import cv2 as cv
+from MachineLearning import MachineLearning
 
 
-class ChessBoardDetector:
-    model = get_model(model_id="chessboard-detection-yqcnu/3")
+class ChessBoardDetector(MachineLearning):
 
-    def __init__(self, image):
-        self.__image = image
-        self.__detections = None
-        self.detect()
-
-    def set_image(self, image):
-        self.__image = image
-        self.detect()
-
-    def detect(self):
-        results = self.model.infer(self.__image)[0]
-        self.__detections = sv.Detections.from_inference(results)
-
-    def get_detections(self):
-        return self.__detections
+    def __init__(self, image, model_id="chessboard-detection-yqcnu/3"):
+        super().__init__(image, model_id)
 
     def get_conor(self):
         points = []
@@ -42,7 +27,10 @@ class ChessBoardDetector:
 
         return [top_left, top_right, bottom_left, bottom_right]
 
-    def get_chessboard_image(self):
+    def get_chessboard_image(self, image=None):
+        if image is not None:
+            self.set_image(image)
+
         top_left, top_right, bottom_left, bottom_right = self.get_conor()
 
         points_on_board = np.float32([top_left, top_right, bottom_left, bottom_right])
@@ -61,19 +49,5 @@ class ChessBoardDetector:
 
         dimension_image = (int(side + 2*padding), int(side + 2*padding))
 
-        dst = cv.warpPerspective(self.__image, matrix, dimension_image)
+        dst = cv.warpPerspective(self.get_image(), matrix, dimension_image)
         return dst
-
-    def display_image(self):
-        bounding_box_annotator = sv.BoxAnnotator()
-        label_annotator = sv.LabelAnnotator()
-
-        # annotate the image with our inference results
-        annotated_image = bounding_box_annotator.annotate(
-            scene=self.__image, detections=self.get_detections())
-        annotated_image = label_annotator.annotate(
-            scene=annotated_image, detections=self.get_detections())
-
-        # display the image
-        sv.plot_image(annotated_image)
-
