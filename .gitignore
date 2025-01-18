@@ -172,3 +172,7 @@ cython_debug/
 
 .idea/
 .DS_Store
+videos/*
+images/*
+*/videos/*
+*/images/*
