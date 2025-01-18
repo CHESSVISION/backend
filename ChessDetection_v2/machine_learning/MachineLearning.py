@@ -7,7 +7,8 @@ class MachineLearning:
         self.__detections = None
         self.__image = image
         self.__model = get_model(model_id=model_id)
-        self.detect()
+        if self.__image:
+            self.detect()
 
     def detect(self):
         results = self.__model.infer(self.__image)[0]
@@ -27,11 +28,11 @@ class MachineLearning:
         bounding_box_annotator = sv.BoxAnnotator()
         label_annotator = sv.LabelAnnotator()
 
-        # annotate the image with our inference results
+        # annotate the images with our inference results
         annotated_image = bounding_box_annotator.annotate(
             scene=self.__image, detections=self.get_detections())
         annotated_image = label_annotator.annotate(
             scene=annotated_image, detections=self.get_detections())
 
-        # display the image
+        # display the images
         sv.plot_image(annotated_image)

@@ -1,8 +1,8 @@
-from MachineLearning import MachineLearning
+from ChessDetection_v2.machine_learning.MachineLearning import MachineLearning
 
 
 class ChessPieceDetector(MachineLearning):
-    def __init__(self, image, model_id="chess-pieces-new/19"):
+    def __init__(self, image=None, model_id="chess-pieces-new/19"):
         super().__init__(image, model_id)
 
     def get_fen_position(self, image=None):

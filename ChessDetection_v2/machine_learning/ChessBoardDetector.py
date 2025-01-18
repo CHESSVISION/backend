@@ -1,12 +1,12 @@
 import math
 import numpy as np
 import cv2 as cv
-from MachineLearning import MachineLearning
+from ChessDetection_v2.machine_learning.MachineLearning import MachineLearning
 
 
 class ChessBoardDetector(MachineLearning):
 
-    def __init__(self, image, model_id="chessboard-detection-yqcnu/3"):
+    def __init__(self, image=None, model_id="chessboard-detection-yqcnu/3"):
         super().__init__(image, model_id)
 
     def get_conor(self):
