@@ -3,16 +3,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 
-from ChessDetection_v2.machine_learning.ChessBoardDetector import ChessBoardDetector
-from ChessDetection_v2.machine_learning.ChessPieceDetector import ChessPieceDetector
-from ChessDetection_v2.machine_learning.HandDetector import HandDetector
+from ChessDetection_v2.machine_learning.ChessBoardDetector import chess_board_detector
+from ChessDetection_v2.machine_learning.ChessPieceDetector import chess_piece_detector
+from ChessDetection_v2.machine_learning.HandDetector import hand_detector
 
 
 class ArtificialIntelligenceAgent:
     def video_to_fen(self, video_file_path):
-        chess_board_detector = ChessBoardDetector()
-        chess_piece_detector = ChessPieceDetector()
-        hand_detector = HandDetector()
 
         # Open the videos file
         video_capture = cv2.VideoCapture(video_file_path)
@@ -65,9 +62,6 @@ class ArtificialIntelligenceAgent:
         return fen_positions
 
     def video_to_fen_chat(self, video_file_path):
-        chess_board_detector = ChessBoardDetector()
-        chess_piece_detector = ChessPieceDetector()
-        hand_detector = HandDetector()
 
         # Open the videos file
         video_capture = cv2.VideoCapture(video_file_path)
@@ -104,3 +98,6 @@ class ArtificialIntelligenceAgent:
 
         video_capture.release()
         return fen_positions
+
+
+artificial_intelligence_agent = ArtificialIntelligenceAgent()

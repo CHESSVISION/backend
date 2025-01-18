@@ -4,7 +4,7 @@ import shutil
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
-from ChessDetection_v2.ArtificialIntelligenceAgent import ArtificialIntelligenceAgent
+from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
 from game.game_manager import game_manager
 
 from config import settings
@@ -38,8 +38,7 @@ async def upload_video(video: UploadFile = File(...)):
     with open(file_location, "wb") as buffer:
         shutil.copyfileobj(video.file, buffer)
 
-    agent = ArtificialIntelligenceAgent()
-    fen_positions = agent.video_to_fen(file_location)
+    fen_positions = artificial_intelligence_agent.video_to_fen(file_location)
 
     return {
         "message": "Video uploaded successfully.",

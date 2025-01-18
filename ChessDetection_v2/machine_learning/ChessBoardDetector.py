@@ -2,12 +2,13 @@ import math
 import numpy as np
 import cv2 as cv
 from ChessDetection_v2.machine_learning.MachineLearning import MachineLearning
+from config import settings
 
 
 class ChessBoardDetector(MachineLearning):
 
-    def __init__(self, image=None, model_id="chessboard-detection-yqcnu/3"):
-        super().__init__(image, model_id)
+    def __init__(self):
+        super().__init__(settings.chess_board_detector_model)
 
     def get_conor(self):
         points = []
@@ -27,9 +28,8 @@ class ChessBoardDetector(MachineLearning):
 
         return [top_left, top_right, bottom_left, bottom_right]
 
-    def get_chessboard_image(self, image=None):
-        if image is not None:
-            self.set_image(image)
+    def get_chessboard_image(self, image):
+        self.set_image(image)
 
         top_left, top_right, bottom_left, bottom_right = self.get_conor()
 
@@ -39,15 +39,19 @@ class ChessBoardDetector(MachineLearning):
 
         height = math.sqrt((bottom_left[0] - top_left[0]) ** 2 + (bottom_left[1] - top_left[1]) ** 2)
 
-        side = (width + height)/2
+        side = (width + height) / 2
 
-        padding = side/8
+        padding = side / 8
 
-        points_on_image = np.float32([[padding, padding], [side + padding, padding], [padding, side+padding], [side + padding, side + padding]])
+        points_on_image = np.float32([[padding, padding], [side + padding, padding], [padding, side + padding],
+                                      [side + padding, side + padding]])
 
         matrix = cv.getPerspectiveTransform(points_on_board, points_on_image)
 
-        dimension_image = (int(side + 2*padding), int(side + 2*padding))
+        dimension_image = (int(side + 2 * padding), int(side + 2 * padding))
 
         dst = cv.warpPerspective(self.get_image(), matrix, dimension_image)
         return dst
+
+
+chess_board_detector = ChessBoardDetector()

@@ -3,12 +3,10 @@ import supervision as sv
 
 
 class MachineLearning:
-    def __init__(self, image, model_id):
+    def __init__(self, model_id):
         self.__detections = None
-        self.__image = image
+        self.__image = None
         self.__model = get_model(model_id=model_id)
-        if self.__image:
-            self.detect()
 
     def detect(self):
         results = self.__model.infer(self.__image)[0]

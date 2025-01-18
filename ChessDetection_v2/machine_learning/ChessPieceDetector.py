@@ -1,13 +1,13 @@
 from ChessDetection_v2.machine_learning.MachineLearning import MachineLearning
+from config import settings
 
 
 class ChessPieceDetector(MachineLearning):
-    def __init__(self, image=None, model_id="chess-pieces-new/19"):
-        super().__init__(image, model_id)
+    def __init__(self):
+        super().__init__(settings.chess_piece_detector_model)
 
-    def get_fen_position(self, image=None):
-        if image is not None:
-            self.set_image(image)
+    def get_fen_position(self, image):
+        self.set_image(image)
 
         side = self.get_image().shape[0]
 
@@ -67,3 +67,6 @@ class ChessPieceDetector(MachineLearning):
         # Join rows with '/'
         fen = '/'.join(fen_rows)
         return fen
+
+
+chess_piece_detector = ChessPieceDetector()
