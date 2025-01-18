@@ -12,3 +12,9 @@ pip install -r requirements.txt
 uvicorn main:app
 ```
 
+
+### Note: What TODO next is 
+    - create game object data and save it
+    - display on client side
+    - export moves
+    - manage game page
