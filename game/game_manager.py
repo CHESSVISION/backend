@@ -1,14 +1,5 @@
+from game_model import GameModel
 from typing import List
-
-from pydantic import BaseModel
-
-
-class GameModel(BaseModel):
-    id: int
-    title: str
-    description: str
-    position: str
-    moves: List[str]
 
 
 class GameManager:
@@ -37,6 +28,7 @@ class GameManager:
 
 
 games = [
+
     GameModel(
         id=1,
         title="Mock 1",
@@ -61,3 +53,5 @@ games = [
         moves=["e2a5", "g7f7", "c9h6"]
     )
 ]
+
+game_manager = GameManager()
