@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
 from game.game_manager import game_manager
+from game.game_model import GameModel, GameDTO
 
 from config import settings
 
@@ -22,12 +23,30 @@ app.add_middleware(
 
 @app.get("/games")
 async def get_games():
-    return game_manager.get_games()
+    response = []
+    for game in game_manager.get_games():
+        game_dto = GameDTO(
+            id=game.id,
+            title=game.title,
+            description=game.description,
+            fen_positions=game.fen_positions,
+            moves=["df"]
+        )
+        response.append(game_dto)
+    return response
 
 
 @app.get("/games/{game_id}")
 async def get_game(game_id: int):
-    return game_manager.get_game(game_id)
+    game = game_manager.get_game(game_id)
+    game_dto = GameDTO(
+        id=game.id,
+        title=game.title,
+        description=game.description,
+        fen_positions=game.fen_positions,
+        moves=["df"]
+    )
+    return game_dto
 
 
 @app.post("/games")
@@ -39,6 +58,14 @@ async def upload_video(video: UploadFile = File(...)):
         shutil.copyfileobj(video.file, buffer)
 
     fen_positions = artificial_intelligence_agent.video_to_fen(file_location)
+    game = GameModel(
+        id=len(game_manager.get_games()) + 1,
+        title="Untitled",
+        description="None",
+        fen_positions=fen_positions,
+
+    )
+    game_manager.add_game(game)
 
     return {
         "message": "Video uploaded successfully.",
