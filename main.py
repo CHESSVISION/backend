@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
 from game.game_manager import game_manager
 from game.game_model import GameModel, GameDTO
+from Chess.Chess import *
 
 from config import settings
 
@@ -44,7 +45,7 @@ async def get_game(game_id: int):
         title=game.title,
         description=game.description,
         fen_positions=game.fen_positions,
-        moves=["df"]
+        moves=find_moves(game.fen_positions)
     )
     return game_dto
 
