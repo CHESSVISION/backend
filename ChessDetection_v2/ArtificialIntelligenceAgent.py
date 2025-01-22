@@ -10,12 +10,15 @@ from ChessDetection_v2.machine_learning.HandDetector import hand_detector
 
 class ArtificialIntelligenceAgent:
     def video_to_fen(self, video_file_path):
+        print("ArtificialIntelligenceAgent: video_to_fen")
+        print("video file path: ", video_file_path)
 
         # Open the videos file
         video_capture = cv2.VideoCapture(video_file_path)
 
         # Check if the videos file was successfully opened
         if not video_capture.isOpened():
+            print("video open failed")
             exit()
 
         # Set up state of the videos
@@ -29,7 +32,9 @@ class ArtificialIntelligenceAgent:
 
             # If the frame was not read successfully, break the loop (end of videos)
             if not success:
-                break
+                print("video capture failed")
+                print(fen_positions)
+                return fen_positions
 
             if hand_detector.found_hand_detected(frame):
                 if cache_frames:
