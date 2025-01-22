@@ -58,8 +58,9 @@ async def upload_video(video: UploadFile = File(...)):
         shutil.copyfileobj(video.file, buffer)
 
     fen_positions = artificial_intelligence_agent.video_to_fen(file_location)
+    game_id = len(game_manager.get_games()) + 1
     game = GameModel(
-        id=len(game_manager.get_games()) + 1,
+        id=game_id,
         title="Untitled",
         description="None",
         fen_positions=fen_positions,
@@ -69,8 +70,7 @@ async def upload_video(video: UploadFile = File(...)):
 
     return {
         "message": "Video uploaded successfully.",
-        "filename": video.filename,
-        "fen_positions": fen_positions
+        "id": game_id
     }
 
 
