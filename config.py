@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     chess_piece_detector_model: str = "chess-pieces-new/19"
     hand_detector_model: str = "hand-detection-2r6df/1"
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 settings = Settings()
