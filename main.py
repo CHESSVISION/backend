@@ -44,7 +44,7 @@ async def get_game(game_id: int):
         id=game.id,
         title=game.title,
         description=game.description,
-        fen_positions=game.fen_positions,
+        fen_positions=[partial_to_full_fen(x) for x in game.fen_positions],
         moves=find_moves(game.fen_positions)
     )
     return game_dto
