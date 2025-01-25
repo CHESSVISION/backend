@@ -33,7 +33,7 @@ games = [
         id=1,
         title="Mock 1",
         description="This is a mock game 1",
-        fen_positions=["rkrnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"]
+        fen_positions=["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "rnbqkbnr/1ppppppp/p7/8/8/8/PPPPPPPP/RNBQKBNR"]
     ),
 
     GameModel(
