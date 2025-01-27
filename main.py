@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
@@ -10,6 +10,7 @@ from game.game_model import GameModel, GameDTO
 from Chess.Chess import *
 
 from config import settings
+from Streaming.ConnectionManager import manager
 
 app = FastAPI()
 
@@ -20,6 +21,11 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers
 )
+
+
+@app.get("/")
+async def root():
+    return {"Hello": "World"}
 
 
 @app.get("/games")
@@ -79,3 +85,26 @@ async def upload_video(video: UploadFile = File(...)):
 async def delete_game(game_id: int):
     game_manager.delete_game(game_id)
     return {"message": f"delete game: {game_id} SUCCESS"}
+
+
+@app.websocket("/ws/stream")
+async def websocket_endpoint(websocket: WebSocket):
+
+    print("Attempting WebSocket connection")
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_bytes()
+            # Detect and store SPS/PPS
+            nal_unit_type = data[0] & 0x1F
+            if nal_unit_type in [7, 8]:  # SPS and PPS
+                manager.set_sps_pps(data)
+            print(f"Received data of length: {len(data)} bytes, NAL unit type: {nal_unit_type}")
+            # Broadcast to other clients
+            await manager.broadcast(data)
+    except WebSocketDisconnect:
+        print("WebSocket disconnected")
+        await manager.disconnect(websocket)
+    except Exception as e:
+        print(f"WebSocket connection error: {e}")
+        await manager.disconnect(websocket)
