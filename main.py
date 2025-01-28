@@ -1,16 +1,16 @@
 import os
 import shutil
 
-from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect, Query
+from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
+from Chess.Chess import *
 from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
+from Streaming.BackgroundTasks import BackgroundTasks
+from Streaming.ConnectionManager import manager
+from config import settings
 from game.game_manager import game_manager
 from game.game_model import GameModel, GameDTO
-from Chess.Chess import *
-
-from config import settings
-from Streaming.ConnectionManager import manager
 
 app = FastAPI()
 
@@ -87,14 +87,31 @@ async def delete_game(game_id: int):
     return {"message": f"delete game: {game_id} SUCCESS"}
 
 
+backgroundTask = BackgroundTasks()
+import io
+import av
+rawData = io.BytesIO()
+container = av.open(rawData, format="h264", mode='r')
+import cv2
 @app.websocket("/ws/stream")
 async def websocket_endpoint(websocket: WebSocket):
+    cur_pos = 0
+    source = "https://stackoverflow.com/questions/62759863/how-to-use-pyav-or-opencv-to-decode-a-live-stream-of-raw-h-264-data"
 
     print("Attempting WebSocket connection")
     await manager.connect(websocket)
     try:
         while True:
             data = await websocket.receive_bytes()
+            rawData.write(data)
+            rawData.seek(cur_pos)
+
+            for packet in container.demux():
+                if packet.size == 0:
+                    continue
+                cur_pos += packet.size
+                for frame in packet.decode():
+                    display_frame(frame)
             # Detect and store SPS/PPS
             nal_unit_type = data[0] & 0x1F
             if nal_unit_type in [7, 8]:  # SPS and PPS
@@ -108,3 +125,10 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         print(f"WebSocket connection error: {e}")
         await manager.disconnect(websocket)
+
+
+def display_frame(self, frame):
+    # Convert AV Frame to OpenCV image
+    img = frame.to_ndarray(format='bgr24')
+    print(img)
+    cv2.imshow('H264 Stream', img)
