@@ -5,9 +5,9 @@ from typing import List
 class GameManager:
     def __init__(self):
         self.__games: List[GameModel] = []
-        self.__setup()
+        self.__setup_in_memory()
 
-    def __setup(self):
+    def __setup_in_memory(self):
         self.__games = games
 
     def get_game(self, game_id: int) -> GameModel:

@@ -31,7 +31,6 @@ async def get_games():
             title=game.title,
             description=game.description,
             fen_positions=game.fen_positions,
-            moves=["df"]
         )
         response.append(game_dto)
     return response
@@ -45,7 +44,6 @@ async def get_game(game_id: int):
         title=game.title,
         description=game.description,
         fen_positions=[partial_to_full_fen(x) for x in game.fen_positions],
-        moves=find_moves(game.fen_positions)
     )
     return game_dto
 
@@ -65,7 +63,6 @@ async def upload_video(video: UploadFile = File(...)):
         title="Untitled",
         description="None",
         fen_positions=fen_positions,
-
     )
     game_manager.add_game(game)
 
