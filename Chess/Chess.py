@@ -2,18 +2,51 @@ import chess
 from typing import List
 
 
-def partial_to_full_fen(
-        piece_placement: str,
-        active_color: str = "w",
-        castling: str = "KQkq",
-        en_passant: str = "-",
-        halfmove_clock: int = 0,
-        fullmove_number: int = 1
-) -> str:
+def find_move_to_reach_fen(board, target_board_fen):
     """
-    Converts the partial piece placement into a full FEN string with default or specified values.
+    From the current 'board', find the single legal move that leads
+    to 'target_board_fen' as a piece placement (i.e. board.board_fen()).
+
+    Returns a chess.Move if found, or None if not found.
     """
-    return f"{piece_placement} {active_color} {castling} {en_passant} {halfmove_clock} {fullmove_number}"
+    for move in board.generate_legal_moves():
+        board.push(move)
+        # Compare only piece placement (board.board_fen()).
+        if board.board_fen() == target_board_fen:
+            board.pop()
+            return move
+        board.pop()
+    return None
+
+
+def build_full_fens_from_partial_fens(partial_fens):
+    """
+    Given a list of partial FENs (piece placement only), find the
+    sequence of moves from the initial board that lead to each position,
+    and collect the full FEN for each position.
+    """
+    board = chess.Board()  # Start at the initial position
+    full_fens = []
+
+    # The first partial fen should match the initial piece placement:
+    if board.board_fen() != partial_fens[0]:
+        raise ValueError("The first partial FEN does not match the standard initial position.")
+
+    # Record the initial position's full FEN
+    full_fens.append(board.fen())
+
+    # Go through all subsequent positions
+    for i in range(1, len(partial_fens)):
+        target_fen = partial_fens[i]
+        move = find_move_to_reach_fen(board, target_fen)
+        if move is None:
+            raise ValueError(f"No single legal move transforms position {i - 1} into position {i}.")
+        # Make that move
+        board.push(move)
+        # Now board is at the new position, so collect its full FEN
+        full_fens.append(board.fen())
+
+    return full_fens
 
 
 def find_move(initial_fen, target_fen):
@@ -150,5 +183,3 @@ def find_moves(fen_positions: List[str]) -> List[str]:
         moves.append(move)
 
     return moves
-
-
