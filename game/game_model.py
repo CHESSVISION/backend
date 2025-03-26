@@ -15,3 +15,8 @@ class GameDTO(BaseModel):
     description: str
     fen_positions: List[str]
     moves: List[str]
+
+
+class GameUpdate(BaseModel):
+    title: str
+    description: str

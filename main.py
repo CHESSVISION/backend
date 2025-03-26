@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
 from game.game_manager import game_manager
-from game.game_model import GameModel, GameDTO
+from game.game_model import GameModel, GameDTO, GameUpdate
 from Chess.Chess import *
 
 from config import settings
@@ -78,3 +78,12 @@ async def upload_video(video: UploadFile = File(...)):
 async def delete_game(game_id: int):
     game_manager.delete_game(game_id)
     return {"message": f"delete game: {game_id} SUCCESS"}
+
+
+@app.post("/games/{id}")
+async def edit_game(game_id: int, game_update: GameUpdate):
+    game = game_manager.get_game(game_id)
+    game.title = game_update.title
+    game.description = game_update.description
+    return game
+
