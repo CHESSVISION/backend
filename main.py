@@ -81,8 +81,8 @@ async def delete_game(game_id: int):
 
 
 @app.post("/games/{id}")
-async def edit_game(game_id: int, game_update: GameUpdate):
-    game = game_manager.get_game(game_id)
+async def edit_game(id: int, game_update: GameUpdate):
+    game = game_manager.get_game(id)
     game.title = game_update.title
     game.description = game_update.description
     return game
