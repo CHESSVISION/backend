@@ -19,6 +19,13 @@ def find_move_to_reach_fen(board, target_board_fen):
     return None
 
 
+def fill_full_fens(partial_fens):
+    result = []
+    for fen in partial_fens:
+        result.append(f"{fen} w KQkq - 0 1")
+    return result
+
+
 def build_full_fens_from_partial_fens(partial_fens):
     """
     Given a list of partial FENs (piece placement only), find the
