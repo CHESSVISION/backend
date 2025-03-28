@@ -13,56 +13,59 @@ class ArtificialIntelligenceAgent:
         print("ArtificialIntelligenceAgent: video_to_fen")
         print("video file path: ", video_file_path)
 
-        # Open the videos file
         video_capture = cv2.VideoCapture(video_file_path)
 
-        # Check if the videos file was successfully opened
         if not video_capture.isOpened():
             print("video open failed")
             exit()
 
-        # Set up state of the videos
-        # 1. initial position by frame before detected hand
         cache_frames = []
         fen_positions = []
-        # Loop through each frame
+
         while True:
-            # Read the next frame from the videos
             success, frame = video_capture.read()
 
-            # If the frame was not read successfully, break the loop (end of videos)
-            if not success:
-                print("video capture failed")
-                print(fen_positions)
-                return fen_positions
+            if not success and not cache_frames:
+                print("End: capture failed")
+                break
 
-            if hand_detector.found_hand_detected(frame):
-                if cache_frames:
-                    voted_fen = defaultdict(int)
+            if frame is not None:
+                if not hand_detector.found_hand_detected(frame):
+                    cache_frames.append(frame)
+                    continue
 
-                    for cache_frame in cache_frames:
-                        try:
-                            image = chess_board_detector.get_chessboard_image(cache_frame)
-                            fen_position = chess_piece_detector.get_fen_position(image)
-                            voted_fen[fen_position] += 1
-                        except Exception as e:
-                            continue
+            voted_fen = defaultdict(int)
 
-                    if voted_fen:
-                        valid_fen = max(voted_fen, key=voted_fen.get)
+            for cache_frame in cache_frames:
+                try:
+                    image = chess_board_detector.get_chessboard_image(cache_frame)
+                    fen_position = chess_piece_detector.get_fen_position(image)
+                    voted_fen[fen_position] += 1
+                except Exception as e:
+                    continue
 
-                        if fen_positions:
-                            if fen_positions[-1] != valid_fen:
-                                fen_positions.append(valid_fen)
-                        else:
-                            fen_positions.append(valid_fen)
+            cache_frames.clear()
 
-                    cache_frames.clear()
+            total_frames = sum(voted_fen.values())
+
+            if total_frames <= 6:
+                print(f"Discard: too few {total_frames}")
                 continue
 
-            cache_frames.append(frame)
+            selected_fen, selected_fen_frames = max(voted_fen.items(), key=lambda item: item[1])
 
-        # Release the videos capture object and close all OpenCV windows
+            if selected_fen_frames < total_frames / 3:
+                print(f"Discard: lower than 0.5 ratio {selected_fen_frames} : {total_frames}")
+                continue
+
+            if fen_positions:
+                if fen_positions[-1] != selected_fen:
+                    fen_positions.append(selected_fen)
+            else:
+                fen_positions.append(selected_fen)
+
+            print(f"Add fen: selected fen {fen_positions[-1]}")
+
         video_capture.release()
         return fen_positions
 
