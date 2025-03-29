@@ -10,6 +10,12 @@ from ChessDetection_v2.machine_learning.HandDetector import hand_detector
 
 
 class ArtificialIntelligenceAgent:
+
+    def image_to_fen(self, file_path):
+        image = chess_board_detector.get_chessboard_image(cv2.imread(file_path))
+        fen_position = chess_piece_detector.get_fen_position(image)
+        return [fen_position]
+
     def video_to_fen(self, video_file_path):
         print("ArtificialIntelligenceAgent: video_to_fen")
         print("video file path: ", video_file_path)
@@ -164,6 +170,8 @@ class ArtificialIntelligenceAgent:
         print(f"\n✅ Annotated video saved at: {output_path}")
         return output_path
 
+
+artificial_intelligence_agent = ArtificialIntelligenceAgent()
 
 # CLI
 if __name__ == "__main__":

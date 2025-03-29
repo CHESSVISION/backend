@@ -8,6 +8,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
     ]
     video_path: str = "./videos"
+    image_path: str = "./images"
     chess_board_detector_model: str = "chessboard-detection-yqcnu/3"
     chess_piece_detector_model: str = "chess-pieces-new/19"
     hand_detector_model: str = "hand-detection-2r6df/1"

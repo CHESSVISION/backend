@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from ChessDetection_v2.ArtificialIntelligenceAgent import artificial_intelligence_agent
@@ -52,13 +52,23 @@ async def get_game(game_id: int):
 
 @app.post("/games")
 async def upload_video(video: UploadFile = File(...)):
+    file = video
     os.makedirs(settings.video_path, exist_ok=True)
+    os.makedirs(settings.image_path, exist_ok=True)
+    print(file.content_type)
+    if file.content_type.startswith("video"):
+        file_path = os.path.join(settings.video_path, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    file_location = os.path.join(settings.video_path, video.filename)
-    with open(file_location, "wb") as buffer:
-        shutil.copyfileobj(video.file, buffer)
+        fen_positions = artificial_intelligence_agent.video_to_fen(file_path)
 
-    fen_positions = artificial_intelligence_agent.video_to_fen(file_location)
+    elif file.content_type.startswith("image"):
+        file_path = os.path.join(settings.image_path, file.filename)
+        fen_positions = artificial_intelligence_agent.image_to_fen(file_path)
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported file type")
+
     game_id = len(game_manager.get_games()) + 1
     game = GameModel(
         id=game_id,
