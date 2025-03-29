@@ -23,6 +23,12 @@ class MachineLearning:
         return self.__image
 
     def display_image(self):
+
+        # display the images
+        sv.plot_image(self.get_annotated_image())
+
+    def get_annotated_image(self):
+
         bounding_box_annotator = sv.BoxAnnotator()
         label_annotator = sv.LabelAnnotator()
 
@@ -32,5 +38,4 @@ class MachineLearning:
         annotated_image = label_annotator.annotate(
             scene=annotated_image, detections=self.get_detections())
 
-        # display the images
-        sv.plot_image(annotated_image)
+        return annotated_image
