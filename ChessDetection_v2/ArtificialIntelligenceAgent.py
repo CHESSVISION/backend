@@ -16,7 +16,7 @@ class ArtificialIntelligenceAgent:
             image = chess_board_detector.get_chessboard_image(cv2.imread(file_path))
             fen_position = chess_piece_detector.get_fen_position(image)
         except Exception as e:
-            return []
+            return ["8/8/8/8/8/8/8/8"]
         return [fen_position]
 
     def video_to_fen(self, video_file_path):
