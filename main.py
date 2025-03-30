@@ -60,15 +60,16 @@ async def upload_video(video: UploadFile = File(...)):
         file_path = os.path.join(settings.video_path, file.filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-
         fen_positions = artificial_intelligence_agent.video_to_fen(file_path)
 
     elif file.content_type.startswith("image"):
         file_path = os.path.join(settings.image_path, file.filename)
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
         fen_positions = artificial_intelligence_agent.image_to_fen(file_path)
     else:
         raise HTTPException(status_code=400, detail="Unsupported file type")
-
+    print(fen_positions)
     game_id = len(game_manager.get_games()) + 1
     game = GameModel(
         id=game_id,

@@ -12,8 +12,11 @@ from ChessDetection_v2.machine_learning.HandDetector import hand_detector
 class ArtificialIntelligenceAgent:
 
     def image_to_fen(self, file_path):
-        image = chess_board_detector.get_chessboard_image(cv2.imread(file_path))
-        fen_position = chess_piece_detector.get_fen_position(image)
+        try:
+            image = chess_board_detector.get_chessboard_image(cv2.imread(file_path))
+            fen_position = chess_piece_detector.get_fen_position(image)
+        except Exception as e:
+            return []
         return [fen_position]
 
     def video_to_fen(self, video_file_path):
