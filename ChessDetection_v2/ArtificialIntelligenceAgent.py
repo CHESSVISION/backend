@@ -40,9 +40,15 @@ class ArtificialIntelligenceAgent:
                 break
 
             if frame is not None:
-                if not hand_detector.found_hand_detected(frame):
+                try:
+                    image = chess_board_detector.get_chessboard_image(frame)
+                except:
+                    continue
+
+                if not hand_detector.found_hand_detected(image):
                     cache_frames.append(frame)
                     continue
+                print("detect dark blue")
 
             voted_fen = defaultdict(int)
 
@@ -50,8 +56,9 @@ class ArtificialIntelligenceAgent:
                 try:
                     image = chess_board_detector.get_chessboard_image(cache_frame)
                     fen_position = chess_piece_detector.get_fen_position(image)
+                    # chess_piece_detector.display_image()
                     voted_fen[fen_position] += 1
-                except Exception as e:
+                except:
                     continue
 
             cache_frames.clear()
@@ -65,8 +72,10 @@ class ArtificialIntelligenceAgent:
             selected_fen, selected_fen_frames = max(voted_fen.items(), key=lambda item: item[1])
 
             if selected_fen_frames < total_frames / 3:
-                print(f"Discard: lower than 0.5 ratio {selected_fen_frames} : {total_frames}")
+                print(f"Discard: lower than 0.33 ratio {selected_fen_frames} : {total_frames}")
                 continue
+
+            # cache_frames.clear()
 
             if fen_positions:
                 if fen_positions[-1] != selected_fen:
